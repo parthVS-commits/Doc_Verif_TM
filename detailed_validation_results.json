@@ -1,0 +1,566 @@
+{
+  "validation_rules": {
+    "director_count": {
+      "rule_id": "DIRECTOR_COUNT",
+      "rule_name": "Director Count Validation",
+      "description": "Minimum 2 and Maximum 5 directors allowed",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "min_directors": 2,
+        "max_directors": 5
+      },
+      "status": "failed",
+      "error_message": null,
+      "details": {}
+    },
+    "passport_photo": {
+      "rule_id": "PASSPORT_PHOTO",
+      "rule_name": "Passport Photo Validation",
+      "description": "Clear passport size photo required",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "min_clarity_score": 0.7,
+        "is_passport_style": true,
+        "face_visible": true
+      },
+      "status": "passed",
+      "error_message": null,
+      "details": {
+        "status": "passed",
+        "error_message": null
+      }
+    },
+    "signature": {
+      "rule_id": "SIGNATURE",
+      "rule_name": "Signature Validation",
+      "description": "Clear, complete signature required",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "min_clarity_score": 0.7,
+        "is_handwritten": true,
+        "is_complete": true
+      },
+      "status": "passed",
+      "error_message": null,
+      "details": {
+        "status": "passed",
+        "error_message": null
+      }
+    },
+    "address_proof": {
+      "rule_id": "ADDRESS_PROOF",
+      "rule_name": "Director Address Proof Validation",
+      "description": "Address proof must be in director's name, complete, and within 45 days",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "max_age_days": 45,
+        "complete_address_required": true,
+        "name_match_required": true
+      },
+      "status": "failed",
+      "error_message": "Address proof for director2 is 102 days old (exceeds 45 days limit)",
+      "details": {
+        "status": "failed",
+        "error_message": "Address proof for director2 is 102 days old (exceeds 45 days limit)"
+      }
+    },
+    "indian_director_pan": {
+      "rule_id": "INDIAN_DIRECTOR_PAN",
+      "rule_name": "Indian Director PAN Card Validation",
+      "description": "PAN card must be clear and director must be 18+",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "min_age": 18,
+        "min_clarity_score": 0.7
+      },
+      "status": "passed",
+      "error_message": null,
+      "details": {
+        "status": "passed",
+        "error_message": null
+      }
+    },
+    "indian_director_aadhar": {
+      "rule_id": "INDIAN_DIRECTOR_AADHAR",
+      "rule_name": "Indian Director Aadhar Validation",
+      "description": "Aadhar front and back required, no masked copies",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "front_required": true,
+        "back_required": true,
+        "masked_not_allowed": true,
+        "different_images_required": true
+      },
+      "status": "failed",
+      "error_message": "Valid Aadhar front and back required for director1",
+      "details": {
+        "status": "failed",
+        "error_message": "Valid Aadhar front and back required for director1"
+      }
+    },
+    "foreign_director_docs": {
+      "rule_id": "FOREIGN_DIRECTOR_DOCS",
+      "rule_name": "Foreign Director Document Validation",
+      "description": "Valid driving license and passport required",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "driving_license_required": true,
+        "passport_required": true,
+        "driving_license_validity_check": true,
+        "passport_validity_check": true
+      },
+      "status": "passed",
+      "error_message": null,
+      "details": {
+        "status": "passed",
+        "error_message": null
+      }
+    },
+    "company_address_proof": {
+      "rule_id": "COMPANY_ADDRESS_PROOF",
+      "rule_name": "Company Address Proof Validation",
+      "description": "Address proof within 45 days, in director's name, complete address",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "max_age_days": 45,
+        "complete_address_required": true,
+        "name_match_required": true
+      },
+      "status": "failed",
+      "error_message": null,
+      "details": {}
+    },
+    "noc_validation": {
+      "rule_id": "NOC_VALIDATION",
+      "rule_name": "No Objection Certificate Validation",
+      "description": "NOC required with property owner's signature",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "noc_required": true,
+        "signature_required": true
+      },
+      "status": "failed",
+      "error_message": null,
+      "details": {}
+    },
+    "aadhar_pan_linkage": {
+      "rule_id": "AADHAR_PAN_LINKAGE",
+      "rule_name": "Aadhar PAN Linkage Validation",
+      "description": "Verify Aadhar and PAN card are linked",
+      "severity": "high",
+      "is_active": true,
+      "conditions": {
+        "linkage_api_check_required": true
+      },
+      "status": "passed",
+      "error_message": null,
+      "details": {
+        "status": "passed",
+        "error_message": null
+      }
+    }
+  },
+  "document_validation": {
+    "directors": {
+      "director2": {
+        "nationality": "Foreign",
+        "is_authorised": true,
+        "is_valid": false,
+        "validation_errors": [
+          "Address proof for director2 is 102 days old (exceeds 45 days limit)"
+        ],
+        "documents": {
+          "panCard": {
+            "url": "https://drive.google.com/file/d/1l5bun1D9ISYqAYImj2VAwaoOlRPWv9pS/view?usp=sharing",
+            "document_type": "pan",
+            "is_valid": true,
+            "extracted_data": {
+              "name": "A KRISHNAN",
+              "father_name": "K R G ANDY",
+              "dob": "27/05/1954",
+              "pan_number": "AXFPK5736K",
+              "clarity_score": 0.95
+            }
+          },
+          "address_proof": {
+            "url": "https://drive.google.com/file/d/1pMokK6ZhlYFbydFsRJJgHi7Szy9k9FxD/view?usp=sharing",
+            "document_type": "address_proof",
+            "is_valid": true,
+            "extracted_data": {
+              "name": "KRISHNAN A",
+              "address": "2 9 KONAVAKORAI KOTAGIRI, TAMIL NADU, INDIA - 643276",
+              "document_type": "Account Statement",
+              "date": "06/03/2025",
+              "issuing_authority": "CANARA BANK",
+              "clarity_score": 0.95,
+              "complete_address_visible": true
+            }
+          },
+          "signature": {
+            "url": "https://drive.google.com/file/d/1iOig2z_PDHkKFMU4m0_sLZngrmjHYrAD/view?usp=sharing",
+            "document_type": "signature",
+            "is_valid": true,
+            "extracted_data": {
+              "clarity_score": 0.95,
+              "is_handwritten": true,
+              "is_complete": true
+            }
+          },
+          "passportPhoto": {
+            "url": "https://drive.google.com/file/d/1Y85m-9233Mx6pq-y-FObD2cQc6AmO2Om/view?usp=sharing",
+            "document_type": "passport_photo",
+            "is_valid": false,
+            "extracted_data": {
+              "extraction_status": "failed",
+              "document_type": "passport_photo",
+              "error_message": "Verification failed",
+              "clarity_score": 0.0
+            }
+          }
+        },
+        "rule_validations": {
+          "foreign_director_docs": {
+            "status": "passed",
+            "error_message": null
+          },
+          "passport_photo": {
+            "status": "passed",
+            "error_message": null
+          },
+          "signature": {
+            "status": "passed",
+            "error_message": null
+          },
+          "address_proof": {
+            "status": "failed",
+            "error_message": "Address proof for director2 is 102 days old (exceeds 45 days limit)"
+          }
+        }
+      },
+      "director1": {
+        "nationality": "Indian",
+        "is_authorised": true,
+        "is_valid": false,
+        "validation_errors": [
+          "Valid Aadhar front and back required for director1",
+          "Address proof for director1 is 144 days old (exceeds 45 days limit)"
+        ],
+        "documents": {
+          "passportPhoto": {
+            "url": "https://drive.google.com/file/d/15ePWxHU016AcKCexKflH--I7zMCxQsMA/view?usp=sharing",
+            "document_type": "passport_photo",
+            "is_valid": true,
+            "extracted_data": {
+              "clarity_score": 0.9,
+              "is_recent": true,
+              "is_passport_style": false,
+              "face_visible": true
+            }
+          },
+          "address_proof": {
+            "url": "https://drive.google.com/file/d/1S1bonPYt8cs9JwvJFeetNjRCnhHeE09e/view?usp=sharing",
+            "document_type": "address_proof",
+            "is_valid": true,
+            "extracted_data": {
+              "name": "A KRISHNAN",
+              "address": "KONAYAKKARAI, KUNRULKARAGAI, CONOOR.",
+              "document_type": "Tax Invoice",
+              "date": "23/01/2025",
+              "issuing_authority": "TAMIL NADU GENERATION AND DISTRIBUTION CORPORATION LIMITED",
+              "clarity_score": 0.95,
+              "complete_address_visible": true
+            }
+          },
+          "panCard": {
+            "url": "https://drive.google.com/file/d/1OvxgK1Ndelcih0AMiGWBuZoxW6MawD5M/view?usp=sharing",
+            "document_type": "pan",
+            "is_valid": true,
+            "extracted_data": {
+              "name": "VIVEK KUMAR",
+              "father_name": "JILAJEET RAM",
+              "dob": "15/04/1980",
+              "pan_number": "ARRPK1877D",
+              "clarity_score": 0.95
+            }
+          },
+          "aadharCardBack": {
+            "url": "https://drive.google.com/file/d/13VuASJkX9SFFTiRWYaJXP68PqEweQgNH/view?usp=sharing",
+            "document_type": "aadhar_back",
+            "is_valid": true,
+            "extracted_data": {
+              "name": "Vivek Kumar",
+              "dob": "15/04/1980",
+              "gender": "M",
+              "aadhar_number": "8039 1188 6850",
+              "address": "C/O: Jilaajeet Ram, 410, 4th Floor, Tower - Latina, Mahagun Mirabella, Sector - 79, Noida, Gautam Buddha Nagar, Uttar Pradesh - 201301",
+              "is_masked": false,
+              "clarity_score": 0.9
+            }
+          },
+          "aadharCardFront": {
+            "url": "https://drive.google.com/file/d/1OvxgK1Ndelcih0AMiGWBuZoxW6MawD5M/view?usp=sharing",
+            "document_type": "aadhar_front",
+            "is_valid": false,
+            "extracted_data": {
+              "extraction_status": "failed",
+              "document_type": "aadhar_front",
+              "error_message": "Verification failed",
+              "clarity_score": 0.0
+            }
+          },
+          "signature": {
+            "url": "https://drive.google.com/file/d/1wDAY45fd6bVmPs0AbejzVxFR42uAxS1-/view?usp=sharing",
+            "document_type": "signature",
+            "is_valid": false,
+            "extracted_data": {
+              "extraction_status": "failed",
+              "document_type": "signature",
+              "error_message": "Verification failed",
+              "clarity_score": 0.0
+            }
+          }
+        },
+        "rule_validations": {
+          "indian_director_pan": {
+            "status": "passed",
+            "error_message": null
+          },
+          "indian_director_aadhar": {
+            "status": "failed",
+            "error_message": "Valid Aadhar front and back required for director1"
+          },
+          "aadhar_pan_linkage": {
+            "status": "passed",
+            "error_message": null
+          },
+          "passport_photo": {
+            "status": "passed",
+            "error_message": null
+          },
+          "signature": {
+            "status": "passed",
+            "error_message": null
+          },
+          "address_proof": {
+            "status": "failed",
+            "error_message": "Address proof for director1 is 144 days old (exceeds 45 days limit)"
+          }
+        }
+      },
+      "director3": {
+        "nationality": "Indian",
+        "is_authorised": true,
+        "is_valid": false,
+        "validation_errors": [
+          "Address proof for director3 is 492 days old (exceeds 45 days limit)"
+        ],
+        "documents": {
+          "aadharCardBack": {
+            "url": "https://drive.google.com/file/d/1MgKSiyNhdYcSFBO1IhLBnV_o7QmR_UiL/view?usp=sharing",
+            "document_type": "aadhar_back",
+            "is_valid": true,
+            "extracted_data": {
+              "name": "Vishwanathan",
+              "dob": null,
+              "gender": null,
+              "aadhar_number": "6342 1453 2240",
+              "address": "SO: Vishwanathan, 7/290, 1st CROSS STREET, 7th BLOCK, MUGAPPAIR WEST, Mogappair, Tiruvallur, Tamil Nadu - 600037",
+              "is_masked": false,
+              "clarity_score": 0.85
+            }
+          },
+          "signature": {
+            "url": "https://drive.google.com/file/d/1RXn40z-xONfuxg2Jic0IZ7fvVXvTKdSV/view?usp=sharing",
+            "document_type": "signature",
+            "is_valid": false,
+            "extracted_data": {
+              "extraction_status": "failed",
+              "document_type": "signature",
+              "error_message": "Verification failed",
+              "clarity_score": 0.0
+            }
+          },
+          "panCard": {
+            "url": "https://drive.google.com/file/d/1CC7aWWG-RCDT-z1VWohlEEsHWND22LWQ/view?usp=sharing",
+            "document_type": "pan",
+            "is_valid": true,
+            "extracted_data": {
+              "name": "DINAKARAN V",
+              "father_name": "PACHIYAPPANNAICKER VISWANATHAN",
+              "dob": "24/04/1973",
+              "pan_number": "AHKPD5293M",
+              "clarity_score": 0.95
+            }
+          },
+          "address_proof": {
+            "url": "https://drive.google.com/file/d/1NFi-kr6Zenp2kwdYRQ4rRlc7uO8fo0tv/view?usp=sharing",
+            "document_type": "address_proof",
+            "is_valid": true,
+            "extracted_data": {
+              "name": "V. DINAKARAN",
+              "address": "FIFTH BLOCK, MPR.WEST/CHENNAI, State: TAMILNADU",
+              "document_type": "Tax Invoice",
+              "date": "10/02/2024",
+              "issuing_authority": "TAMILNADU GENERATION AND DISTRIBUTION CORPORATION LIMITED",
+              "clarity_score": 0.95,
+              "complete_address_visible": true
+            }
+          },
+          "aadharCardFront": {
+            "url": "https://drive.google.com/file/d/1Bu4OAIBunwj2GT9tjnOtH00yu8EIoywE/view?usp=sharing",
+            "document_type": "aadhar_front",
+            "is_valid": true,
+            "extracted_data": {
+              "name": "Dinakaran V",
+              "dob": "24/04/1973",
+              "gender": "M",
+              "aadhar_number": "6342 1453 2240",
+              "address": null,
+              "is_masked": false,
+              "clarity_score": 0.9
+            }
+          },
+          "passportPhoto": {
+            "url": "https://drive.google.com/file/d/15ePWxHU016AcKCexKflH--I7zMCxQsMA/view?usp=sharing",
+            "document_type": "passport_photo",
+            "is_valid": true,
+            "extracted_data": {
+              "clarity_score": 0.95,
+              "is_recent": true,
+              "is_passport_style": false,
+              "face_visible": true
+            }
+          }
+        },
+        "rule_validations": {
+          "indian_director_pan": {
+            "status": "passed",
+            "error_message": null
+          },
+          "indian_director_aadhar": {
+            "status": "passed",
+            "error_message": null
+          },
+          "aadhar_pan_linkage": {
+            "status": "passed",
+            "error_message": null
+          },
+          "passport_photo": {
+            "status": "passed",
+            "error_message": null
+          },
+          "signature": {
+            "status": "passed",
+            "error_message": null
+          },
+          "address_proof": {
+            "status": "failed",
+            "error_message": "Address proof for director3 is 492 days old (exceeds 45 days limit)"
+          }
+        }
+      },
+      "rule_validations": {
+        "director_count": {
+          "status": "passed",
+          "error_message": null
+        },
+        "foreign_director_docs": {
+          "status": "passed",
+          "error_message": null
+        },
+        "passport_photo": {
+          "status": "passed",
+          "error_message": null
+        },
+        "signature": {
+          "status": "passed",
+          "error_message": null
+        },
+        "address_proof": {
+          "status": "failed",
+          "error_message": "Address proof for director3 is 492 days old (exceeds 45 days limit)"
+        },
+        "indian_director_pan": {
+          "status": "passed",
+          "error_message": null
+        },
+        "indian_director_aadhar": {
+          "status": "passed",
+          "error_message": null
+        },
+        "aadhar_pan_linkage": {
+          "status": "passed",
+          "error_message": null
+        }
+      }
+    },
+    "companyDocuments": {
+      "addressProof": {
+        "url": "https://drive.google.com/file/d/1S1bonPYt8cs9JwvJFeetNjRCnhHeE09e/view?usp=sharing",
+        "is_valid": true,
+        "clarity_score": 0.95,
+        "complete_address_visible": true,
+        "extracted_data": {
+          "name": "A KRISHNAN KAVIRAJAKKAL",
+          "address": "KONAYAKKARAI, KUNRAKKARAI, CUDDALORE.",
+          "document_type": "Tax Invoice",
+          "date": "23/01/2025",
+          "issuing_authority": "TAMIL NADU GENERATION AND DISTRIBUTION CORPORATION LIMITED",
+          "clarity_score": 0.95,
+          "complete_address_visible": true
+        }
+      },
+      "noc": {
+        "url": "https://drive.google.com/file/d/1rkGAKSnsLNfUlDudwj25B9nQSQTntzPe/view?usp=sharing",
+        "is_valid": true,
+        "has_signature": true,
+        "extracted_data": {
+          "owner_name": "DINAKARAN V",
+          "property_address": "5315, Thiruvalluvar, 2nd Street, Jj Nagar West, Tamil Nadu, 600037",
+          "applicant_name": "VISHABHAIRAVI BHARAT REALTYS Private Limited",
+          "date": "01/04/2025",
+          "purpose": "Using the said address as the Registered office address",
+          "has_signature": true,
+          "clarity_score": 0.95,
+          "is_valid_noc": true
+        }
+      },
+      "validation_errors": [
+        "Address proof is 144 days old (exceeds 45 days limit)"
+      ],
+      "is_valid": false
+    }
+  },
+  "missing_documents": {
+    "aadharCardFront": [
+      "director2"
+    ],
+    "aadharCardBack": [
+      "director2"
+    ],
+    "passport": [
+      "director2",
+      "director3"
+    ],
+    "drivingLicense": [
+      "director2",
+      "director3"
+    ]
+  },
+  "metadata": {
+    "service_id": "1",
+    "request_id": "REQ_12345",
+    "timestamp": "2025-06-16T12:12:35.179455",
+    "processing_time": 39.48490905761719,
+    "is_compliant": false
+  }
+}

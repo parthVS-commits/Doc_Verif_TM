@@ -1,0 +1,147 @@
+{
+  "validation_rules": {
+    "director_count": {
+      "status": "passed",
+      "error_message": null
+    },
+    "passport_photo_validation": {
+      "status": "passed",
+      "error_message": null
+    },
+    "signature_validation": {
+      "status": "passed",
+      "error_message": null
+    },
+    "address_proof_validation": {
+      "status": "passed",
+      "error_message": null
+    },
+    "pan_validation": {
+      "status": "passed",
+      "error_message": null
+    },
+    "aadhar_validation": {
+      "status": "passed",
+      "error_message": null
+    },
+    "foreign_director_docs_validation": {
+      "status": "passed",
+      "error_message": null
+    },
+    "company_address_proof": {
+      "status": "failed",
+      "error_message": "Address proof is 82 days old (exceeds 45 days limit)"
+    },
+    "noc_validation": {
+      "status": "passed",
+      "error_message": null
+    },
+    "aadhar_pan_linkage": {
+      "status": "passed",
+      "error_message": null
+    }
+  },
+  "document_validation": {
+    "directors": {
+      "director1": {
+        "nationality": "Indian",
+        "documents": {
+          "aadharCardFront": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "aadharCardBack": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "panCard": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "passportPhoto": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "address_proof": {
+            "status": "Not Valid",
+            "error_messages": [
+              "Download failed"
+            ]
+          },
+          "signature": {
+            "status": "Not Valid",
+            "error_messages": [
+              "Verification failed"
+            ]
+          }
+        }
+      },
+      "director2": {
+        "nationality": "Foreign",
+        "documents": {
+          "panCard": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "passportPhoto": {
+            "status": "Not Valid",
+            "error_messages": [
+              "Verification failed"
+            ]
+          },
+          "address_proof": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "signature": {
+            "status": "Valid",
+            "error_messages": []
+          }
+        }
+      },
+      "director3": {
+        "nationality": "Indian",
+        "documents": {
+          "aadharCardFront": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "aadharCardBack": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "panCard": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "passportPhoto": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "address_proof": {
+            "status": "Valid",
+            "error_messages": []
+          },
+          "signature": {
+            "status": "Not Valid",
+            "error_messages": [
+              "Verification failed"
+            ]
+          }
+        }
+      }
+    },
+    "companyDocuments": {
+      "addressProof": {
+        "status": "Valid",
+        "error_messages": [
+          "Address proof is 82 days old (exceeds 45 days limit)"
+        ]
+      },
+      "noc": {
+        "status": "Valid",
+        "error_messages": []
+      }
+    }
+  }
+}

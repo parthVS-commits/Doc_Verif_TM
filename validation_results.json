@@ -1,0 +1,68 @@
+{
+  "validation_rules": {
+    "global_error": {
+      "status": "failed",
+      "error_message": "One or more directors failed validation",
+      "global_errors": [],
+      "director_errors": {}
+    }
+  },
+  "document_validation": {
+    "directors": {
+      "validation_error": "One or more directors failed validation",
+      "detailed_errors": {
+        "director1": [
+          "Passport photo does not meet style or visibility requirements",
+          "Signature clarity is below required threshold",
+          "Signature must be handwritten",
+          "Signature must be complete"
+        ],
+        "director2": [
+          "Passport photo clarity is below required threshold",
+          "Passport photo does not meet style or visibility requirements",
+          "Signature clarity is below required threshold",
+          "Signature must be handwritten",
+          "Signature must be complete"
+        ]
+      }
+    },
+    "companyDocuments": {
+      "addressProof": {
+        "url": "https://drive.google.com/file/d/1S1bonPYt8cs9JwvJFeetNjRCnhHeE09e/view?usp=sharing",
+        "is_valid": true,
+        "clarity_score": 0.95,
+        "complete_address_visible": true,
+        "extracted_data": {
+          "name": "A KRISHNAN KAVIRAKKARAN",
+          "address": "KONAYAKKARAI, KUNRULAKKARAI, CONOCOOT.",
+          "document_type": "Tax Invoice for LT Current Consumption Charges",
+          "date": "23/01/2025",
+          "issuing_authority": "TAMILNADU GENERATION AND DISTRIBUTION CORPORATION LIMITED",
+          "clarity_score": 0.95,
+          "complete_address_visible": true
+        }
+      },
+      "noc": {
+        "url": "https://drive.google.com/file/d/1ymhM6jNQqAlxrp3e_XUzogc_1Jcvt1Ej/view?usp=sharing",
+        "is_valid": true,
+        "clarity_score": 0.95,
+        "has_signature": true,
+        "extracted_data": {
+          "owner_name": "SUNIL VIDESHILAL BIND",
+          "property_address": "No.302 Wing-a Phase1, Narayan Shopping, Palghar, Maharashtra, India, 401501",
+          "applicant_name": "Boisar Network Internet (OPC) Private Limited",
+          "date": "27/03/2025",
+          "purpose": "Using the address as the Registered office address",
+          "has_signature": true,
+          "clarity_score": 0.95,
+          "is_valid_noc": true
+        }
+      },
+      "validation_errors": [
+        "Address proof is 71 days old (exceeds 45 days limit)",
+        "Address proof is not in the name of any director"
+      ],
+      "is_valid": false
+    }
+  }
+}

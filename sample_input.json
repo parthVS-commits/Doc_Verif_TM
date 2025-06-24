@@ -1,0 +1,33 @@
+{
+    "service_id": "1",
+    "request_id": "REQ_12345",
+    "directors": {
+      "director1": {
+        "nationality": "Indian",
+        "authorised": "Yes",
+        "documents": {
+          "aadharCardFront": "https://drive.google.com/file/d/13VuASJkX9SFFTiRWYaJXP68PqEweQgNH/view?usp=sharing",
+          "aadharCardBack": "https://drive.google.com/file/d/13VuASJkX9SFFTiRWYaJXP68PqEweQgNH/view?usp=sharing",
+          "panCard": "https://drive.google.com/file/d/1OvxgK1Ndelcih0AMiGWBuZoxW6MawD5M/view?usp=sharing",
+          "passportPhoto": "https://drive.google.com/file/d/15ePWxHU016AcKCexKflH--I7zMCxQsMA/view?usp=sharing",
+          "address_proof": "https://drive.google.com/file/d/1S1bonPYt8cs9JwvJFeetNjRCnhHeE09e/view?usp=sharing",
+          "signature": "https://drive.google.com/file/d/1wDAY45fd6bVmPs0AbejzVxFR42uAxS1-/view?usp=sharing"
+        }
+      },
+      "director2": {
+        "nationality": "Foreign",
+        "authorised": "Yes",
+        "documents": {
+          "panCard": "https://drive.google.com/file/d/1l5bun1D9ISYqAYImj2VAwaoOlRPWv9pS/view?usp=sharing",
+          "passportPhoto": "https://drive.google.com/file/d/1Y85m-9233Mx6pq-y-FObD2cQc6AmO2Om/view?usp=sharing",
+          "address_proof": "https://drive.google.com/file/d/1pMokK6ZhlYFbydFsRJJgHi7Szy9k9FxD/view?usp=sharing",
+          "signature": "https://drive.google.com/file/d/1iOig2z_PDHkKFMU4m0_sLZngrmjHYrAD/view?usp=sharing"
+        }
+      }
+    },
+    "companyDocuments": {
+      "address_proof_type": "Utility Bill",
+      "addressProof": "https://drive.google.com/file/d/1S1bonPYt8cs9JwvJFeetNjRCnhHeE09e/view?usp=sharing",
+      "noc": "https://drive.google.com/file/d/1rkGAKSnsLNfUlDudwj25B9nQSQTntzPe/view?usp=sharing"
+    }
+  }
