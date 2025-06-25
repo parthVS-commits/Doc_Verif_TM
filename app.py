@@ -91,6 +91,10 @@ class Applicant(BaseModel):
 
 class VerificationDoc(BaseModel):
     url: str
+    logo_url: Optional[str] = None  # URL to the logo file
+    company_name_visible: Optional[bool] = True
+    logo_visible: Optional[bool] = None  # Whether the logo is visible in this doc
+    brand_name_visible: Optional[bool] = None  # Whether the brand name is visible in this doc
 
 class Trademark(BaseModel):
     BrandName: str
