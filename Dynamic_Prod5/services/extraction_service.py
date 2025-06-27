@@ -384,6 +384,7 @@ class ExtractionService:
             # 1. Load document_data from file, URL, or base64
             document_data = None
             if isinstance(source, str):
+                source = source.strip()
                 if os.path.isfile(source):
                     with open(source, 'rb') as f:
                         document_data = f.read()
