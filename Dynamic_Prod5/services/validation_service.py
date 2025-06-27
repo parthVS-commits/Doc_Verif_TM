@@ -4237,7 +4237,10 @@ class DocumentValidationService:
             validation_result["is_valid"] = False
             validation_result["validation_errors"].append("Missing applicant type")
             return validation_result
-        
+        company_name = applicant_data.get("company_name", "")
+        # if not company_name:
+        #     validation_result["is_valid"] = False
+        #     validation_result["validation_errors"].append("Company name is required")
         # Get TM_APPLICANT_TYPE rule
         applicant_type_rule = next(
             (rule for rule in rules if rule.get('rule_id') == 'TM_APPLICANT_TYPE'),
@@ -4376,7 +4379,10 @@ class DocumentValidationService:
             "msme_validation": {},
             "dipp_validation": {}
         }
-        
+        company_name = applicant_data.get("company_name", "")
+        if not company_name:
+            validation_result["is_valid"] = False
+            validation_result["validation_errors"].append("Company name is required for TM company certificate validation")
         # Get certificate requirements
         documents = applicant_data.get('documents', {})
         compliance = applicant_data.get('compliance', {})
@@ -4591,6 +4597,14 @@ class DocumentValidationService:
         has_logo = trademark_data.get('Logo') == "Yes"
         brand_name = trademark_data.get('BrandName', '')
         # print("--------------Brand Name:", brand_name)
+        # Brand name must not be empty
+        # if not brand_name or not brand_name.strip():
+        #     validation_result["is_valid"] = False
+        #     validation_result["validation_errors"].append("Brand name is required.")
+
+        if has_logo and not logo_file:
+            validation_result["is_valid"] = False
+            validation_result["validation_errors"].append("Logo is marked as 'Yes' but no logo file was uploaded.")
         if already_in_use:
             # Get TM_TRADEMARK_VERIFICATION rule
             verification_rule = next(
@@ -4606,7 +4620,7 @@ class DocumentValidationService:
                 verification_docs = trademark_data.get('VerificationDocs', {})
                 
                 # Check if enough verification docs provided
-                if len(verification_docs) < min_verification_docs:
+                if not verification_docs or len(verification_docs) < min_verification_docs:
                     validation_result["is_valid"] = False
                     validation_result["validation_errors"].append(
                         f"At least {min_verification_docs} verification document(s) required for trademark already in use"
@@ -4629,19 +4643,23 @@ class DocumentValidationService:
                             verification_docs_validation["validation_errors"]
                         )
                     
-                    # Check brand name in logo if needed
-                    if has_logo and logo_file:
-                        brand_name_in_logo_validation = self._validate_brand_name_in_logo(
-                            trademark_data,
-                            applicant_data,
-                            rules
-                        )
-                        
-                        if brand_name_in_logo_validation["status"] == "failed":
-                            validation_result["is_valid"] = False
-                            validation_result["validation_errors"].append(
-                                brand_name_in_logo_validation["error_message"]
-                            )
+        # Check brand name in logo if needed
+        if has_logo and logo_file:
+            brand_name_in_logo_validation = self._validate_brand_name_in_logo(
+                trademark_data,
+                applicant_data,
+                rules
+            )
+            # if brand_name_in_logo_validation["status"] == "failed":
+            #     validation_result["is_valid"] = False
+            #     error_msg = brand_name_in_logo_validation["error_message"]
+            #     if error_msg not in validation_result["validation_errors"]:
+            #         validation_result["validation_errors"].append(error_msg)
+            if brand_name_in_logo_validation["status"] == "failed":
+                validation_result["is_valid"] = False
+                validation_result["validation_errors"].append(
+                    brand_name_in_logo_validation["error_message"]
+                )
         
         return validation_result
     def _validate_verification_documents(self, verification_docs, brand_name, has_logo, already_in_use, applicant_data):
@@ -4836,15 +4854,15 @@ class DocumentValidationService:
         logo_file = trademark_data.get("LogoFile")
         brand_name = trademark_data.get('BrandName', '')
 
-        if not has_logo:
-            return validation_result
+        # if not has_logo:
+        #     return validation_result
 
-        if not logo_file:
-            validation_result["status"] = "failed"
-            validation_result["error_message"] = "Logo file not provided for logo validation"
-            return validation_result
+        # if not logo_file:
+        #     validation_result["status"] = "failed"
+        #     validation_result["error_message"] = "Logo file not provided for logo validation"
+        #     return validation_result
 
-        if not brand_name:
+        if not brand_name or not brand_name.strip():
             validation_result["status"] = "failed"
             validation_result["error_message"] = "Brand name is required for logo validation"
             return validation_result
@@ -4860,14 +4878,15 @@ class DocumentValidationService:
                 source,
                 'trademark_verification'
             )
-
+            print("-----------------------Extracted Data:")
             logo_visible = extracted_data.get('logo_visible', False)
             brand_in_logo = extracted_data.get('brand_name_in_logo', False)
             brand_names_found = extracted_data.get('brand_names_found') or []
             brand_name_match = any(
                 self._names_match(brand_name, b) for b in brand_names_found if b
             )
-
+            if logo_visible:
+                validation_result["error_message"] = "Logo is visible in the logo file"
             if not (logo_visible and (brand_in_logo or brand_name_match)):
                 validation_result["status"] = "failed"
                 validation_result["error_message"] = f"Brand name '{brand_name}' not found in logo file"
@@ -5023,7 +5042,7 @@ class DocumentValidationService:
             for tm_key, tm_validation in trademark_validations.items():
                 if not tm_validation.get('is_valid', False):
                     for error in tm_validation.get('validation_errors', []):
-                        if "brand name not found in any logo" in error.lower():
+                        if ("brand name not found in any logo" in error.lower() or "brand name is required" in error.lower()):
                             brand_name_errors.append(f"{tm_key}: {error}")
             
             rule_validations['tm_brand_name_in_logo'] = {
