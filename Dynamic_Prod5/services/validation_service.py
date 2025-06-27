@@ -4665,7 +4665,9 @@ class DocumentValidationService:
     def _validate_verification_documents(self, verification_docs, brand_name, has_logo, already_in_use, applicant_data):
         """
         Validate trademark verification documents.
-        If logo is present and already in use, at least one verification doc must have either the brand name or logo.
+        1. If any doc has a brand name matching the entered brand name, pass.
+        2. Else, if any doc has a logo and it matches the uploaded logo, pass.
+        3. Else, fail with error.
         """
         validation_result = {
             "is_valid": True,
@@ -4673,8 +4675,25 @@ class DocumentValidationService:
             "document_validations": {}
         }
 
-        # Track if any doc has logo or brand name
-        logo_or_brand_name_found = False
+        # Extract logo features from the uploaded logo file (if present)
+        logo_file = applicant_data.get("LogoFile") or applicant_data.get("logo_file")
+        logo_features = None
+        if has_logo and logo_file:
+            try:
+                if isinstance(logo_file, str) and not (logo_file.startswith("http://") or logo_file.startswith("https://")):
+                    logo_source = self._save_base64_to_tempfile(logo_file, "png")
+                else:
+                    logo_source = logo_file
+                logo_extracted = self.extraction_service.extract_document_data(
+                    logo_source,
+                    'trademark_verification'
+                )
+                logo_features = logo_extracted.get('logo_features')  # This should be a hash, embedding, or similar
+            except Exception as e:
+                self.logger.error(f"Error extracting features from uploaded logo: {str(e)}")
+
+        brand_name_found = False
+        logo_match_found = False
 
         for doc_key, doc_info in verification_docs.items():
             doc_url = doc_info.get('url', '')
@@ -4706,16 +4725,17 @@ class DocumentValidationService:
                     doc_validation["is_valid"] = False
                     doc_validation["validation_errors"].append(f"Failed to extract data from {doc_key}")
                 else:
-                    # Check for logo or brand name (only if has_logo is True)
-                    if has_logo and already_in_use:
-                        logo_visible = extracted_data.get('logo_visible', False)
-                        brand_names_found = extracted_data.get('brand_names_found') or []
-                        brand_name_match = any(
-                            self._names_match(brand_name, b) for b in brand_names_found if b
-                        )
-                        # If either logo or brand name is found, set flag
-                        if logo_visible or brand_name_match:
-                            logo_or_brand_name_found = True
+                    # 1. Check for brand name match
+                    brand_names_found = extracted_data.get('brand_names_found') or []
+                    if any(self._names_match(brand_name, b) for b in brand_names_found if b):
+                        brand_name_found = True
+
+                    # 2. If no brand name match, check for logo match
+                    if not brand_name_found and has_logo and logo_features:
+                        doc_logo_features = extracted_data.get('logo_features')
+                        # You need to define how to compare logo_features (hash, embedding, etc.)
+                        if doc_logo_features and self._logo_features_match(logo_features, doc_logo_features):
+                            logo_match_found = True
 
                 validation_result["document_validations"][doc_key] = doc_validation
 
@@ -4727,14 +4747,100 @@ class DocumentValidationService:
                     "url": doc_url
                 }
 
-        # Final check: if logo is required, at least one doc must have logo or brand name
-        if has_logo and not logo_or_brand_name_found:
+        # Final check
+        if brand_name_found:
+            return validation_result  
+        elif logo_match_found:
+            return validation_result  
+        else:
             validation_result["is_valid"] = False
             validation_result["validation_errors"].append(
-                f"Neither logo nor brand name '{brand_name}' found in any verification document"
+                f"Neither brand name '{brand_name}' nor matching logo found in any verification document"
             )
+            return validation_result
 
-        return validation_result
+    # Add this helper for logo comparison
+    def _logo_features_match(self, features1, features2):
+        """
+        Compare two logo features (hash, embedding, etc.)
+        For hash: return features1 == features2
+        For embedding: use cosine similarity or similar metric
+        """
+        # Example for hash:
+        return features1 == features2
+    # def _validate_verification_documents(self, verification_docs, brand_name, has_logo, already_in_use, applicant_data):
+    #     """
+    #     Validate trademark verification documents.
+    #     If logo is present and already in use, at least one verification doc must have either the brand name or logo.
+    #     """
+    #     validation_result = {
+    #         "is_valid": True,
+    #         "validation_errors": [],
+    #         "document_validations": {}
+    #     }
+
+    #     # Track if any doc has logo or brand name
+    #     logo_or_brand_name_found = False
+
+    #     for doc_key, doc_info in verification_docs.items():
+    #         doc_url = doc_info.get('url', '')
+    #         if not doc_url:
+    #             validation_result["is_valid"] = False
+    #             validation_result["validation_errors"].append(f"Missing URL for {doc_key}")
+    #             continue
+
+    #         try:
+    #             # Save base64 to temp file if needed
+    #             if isinstance(doc_url, str) and not (doc_url.startswith("http://") or doc_url.startswith("https://")):
+    #                 source = self._save_base64_to_tempfile(doc_url, "pdf")
+    #             else:
+    #                 source = doc_url
+
+    #             extracted_data = self.extraction_service.extract_document_data(
+    #                 source,
+    #                 'trademark_verification'
+    #             )
+
+    #             doc_validation = {
+    #                 "is_valid": True,
+    #                 "validation_errors": [],
+    #                 "url": doc_url,
+    #                 "extracted_data": extracted_data
+    #             }
+
+    #             if not extracted_data:
+    #                 doc_validation["is_valid"] = False
+    #                 doc_validation["validation_errors"].append(f"Failed to extract data from {doc_key}")
+    #             else:
+    #                 # Check for logo or brand name (only if has_logo is True)
+    #                 if has_logo and already_in_use:
+    #                     logo_visible = extracted_data.get('logo_visible', False)
+    #                     brand_names_found = extracted_data.get('brand_names_found') or []
+    #                     brand_name_match = any(
+    #                         self._names_match(brand_name, b) for b in brand_names_found if b
+    #                     )
+    #                     # If either logo or brand name is found, set flag
+    #                     if logo_visible or brand_name_match:
+    #                         logo_or_brand_name_found = True
+
+    #             validation_result["document_validations"][doc_key] = doc_validation
+
+    #         except Exception as e:
+    #             self.logger.error(f"Verification document validation error: {str(e)}", exc_info=True)
+    #             validation_result["document_validations"][doc_key] = {
+    #                 "is_valid": False,
+    #                 "validation_errors": [f"Error validating document: {str(e)}"],
+    #                 "url": doc_url
+    #             }
+
+    #     # Final check: if logo is required, at least one doc must have logo or brand name
+    #     if has_logo and not logo_or_brand_name_found:
+    #         validation_result["is_valid"] = False
+    #         validation_result["validation_errors"].append(
+    #             f"Neither logo nor brand name '{brand_name}' found in any verification document"
+    #         )
+
+    #     return validation_result
     # def _validate_verification_documents(self, verification_docs, brand_name, has_logo, applicant_data):
     #     """
     #     Validate trademark verification documents
@@ -4878,16 +4984,16 @@ class DocumentValidationService:
                 source,
                 'trademark_verification'
             )
-            print("-----------------------Extracted Data:")
+            # print("-----------------------Extracted Data:")
             logo_visible = extracted_data.get('logo_visible', False)
             brand_in_logo = extracted_data.get('brand_name_in_logo', False)
             brand_names_found = extracted_data.get('brand_names_found') or []
             brand_name_match = any(
                 self._names_match(brand_name, b) for b in brand_names_found if b
             )
-            if logo_visible:
-                validation_result["error_message"] = "Logo is visible in the logo file"
-            if not (logo_visible and (brand_in_logo or brand_name_match)):
+            # if logo_visible:
+            #     validation_result["error_message"] = "Logo is visible in the logo file"
+            if not (logo_visible and (brand_in_logo and brand_name_match)):
                 validation_result["status"] = "failed"
                 validation_result["error_message"] = f"Brand name '{brand_name}' not found in logo file"
         except Exception as e:
