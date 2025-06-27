@@ -190,10 +190,10 @@ class DocumentValidationAPI:
             for doc_key, doc_content in documents.items():
                 if doc_content is not None and not isinstance(doc_content, str):
                     raise DocumentValidationError(
-                        f"Document URL for {doc_key} in director {director_key} must be a base64-encoded string"
+                        f"Document URL for {doc_key} in director {director_key} must be a base64-encoded string or URL"
                     )
                 try:
-                    if doc_content:
+                    if doc_content and not doc_content.strip().lower().startswith("http"):
                         base64.b64decode(doc_content)
                 except Exception:
                     raise DocumentValidationError(

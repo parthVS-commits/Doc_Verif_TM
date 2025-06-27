@@ -4694,7 +4694,7 @@ class DocumentValidationService:
 
         brand_name_found = False
         logo_match_found = False
-
+        date_found = False
         for doc_key, doc_info in verification_docs.items():
             doc_url = doc_info.get('url', '')
             if not doc_url:
@@ -4725,6 +4725,9 @@ class DocumentValidationService:
                     doc_validation["is_valid"] = False
                     doc_validation["validation_errors"].append(f"Failed to extract data from {doc_key}")
                 else:
+                    document_date = extracted_data.get('document_date')
+                    if document_date:
+                       date_found = True 
                     # 1. Check for brand name match
                     brand_names_found = extracted_data.get('brand_names_found') or []
                     if any(self._names_match(brand_name, b) for b in brand_names_found if b):
@@ -4748,11 +4751,15 @@ class DocumentValidationService:
                 }
 
         # Final check
-        if brand_name_found:
+
+        if brand_name_found and date_found:
             return validation_result  
-        elif logo_match_found:
+        elif logo_match_found and date_found:
             return validation_result  
         else:
+            if not date_found:
+                validation_result["is_valid"] = False
+                validation_result["validation_errors"].append("No document date found in any verification document")
             validation_result["is_valid"] = False
             validation_result["validation_errors"].append(
                 f"Neither brand name '{brand_name}' nor matching logo found in any verification document"
@@ -4988,20 +4995,36 @@ class DocumentValidationService:
             logo_visible = extracted_data.get('logo_visible', False)
             brand_in_logo = extracted_data.get('brand_name_in_logo', False)
             brand_names_found = extracted_data.get('brand_names_found') or []
-            brand_name_match = any(
-                self._names_match(brand_name, b) for b in brand_names_found if b
-            )
-            # if logo_visible:
-            #     validation_result["error_message"] = "Logo is visible in the logo file"
-            if not (logo_visible and (brand_in_logo and brand_name_match)):
+            # Require exact (normalized) match with any extracted brand name
+            def normalize(name):
+                import re
+                return re.sub(r'[^\w\s]', '', name.lower()).strip()
+
+            normalized_input = normalize(brand_name)
+            matches = [normalize(b) for b in brand_names_found if b]
+            if not (logo_visible and normalized_input in matches):
                 validation_result["status"] = "failed"
-                validation_result["error_message"] = f"Brand name '{brand_name}' not found in logo file"
+                validation_result["error_message"] = f"Brand name '{brand_name}' not found as exact match in logo file"
         except Exception as e:
             self.logger.error(f"Error checking brand name in logo file: {str(e)}", exc_info=True)
             validation_result["status"] = "failed"
             validation_result["error_message"] = f"Error validating logo file: {str(e)}"
 
         return validation_result
+        #     brand_name_match = any(
+        #         self._names_match(brand_name, b) for b in brand_names_found if b
+        #     )
+        #     # if logo_visible:
+        #     #     validation_result["error_message"] = "Logo is visible in the logo file"
+        #     if not (logo_visible and (brand_in_logo and brand_name_match)):
+        #         validation_result["status"] = "failed"
+        #         validation_result["error_message"] = f"Brand name '{brand_name}' not found in logo file"
+        # except Exception as e:
+        #     self.logger.error(f"Error checking brand name in logo file: {str(e)}", exc_info=True)
+        #     validation_result["status"] = "failed"
+        #     validation_result["error_message"] = f"Error validating logo file: {str(e)}"
+
+        # return validation_result
 
     # def _validate_brand_name_in_logo(self, trademark_data, applicant_data, rules):
     #     """
