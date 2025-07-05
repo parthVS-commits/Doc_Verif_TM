@@ -4993,16 +4993,22 @@ class DocumentValidationService:
             )
             # print("-----------------------Extracted Data:")
             logo_visible = extracted_data.get('logo_visible', False)
-            brand_in_logo = extracted_data.get('brand_name_in_logo', False)
-            brand_names_found = extracted_data.get('brand_names_found') or []
-            # Require exact (normalized) match with any extracted brand name
-            def normalize(name):
+            extracted_text = extracted_data.get('extracted_text', '')
+            text_matches_company_name = extracted_data.get('text_matches_company_name', False)
+            
+            # Normalize both the extracted text and company name
+            def normalize(text):
+                if not text:
+                    return ''
                 import re
-                return re.sub(r'[^\w\s]', '', name.lower()).strip()
+                return re.sub(r'[^\w\s]', '', str(text).lower()).strip()
 
             normalized_input = normalize(brand_name)
-            matches = [normalize(b) for b in brand_names_found if b]
-            if not (logo_visible and normalized_input in matches):
+            normalized_text = normalize(extracted_text)
+            
+            # Check if the normalized company name is present in the normalized extracted text
+            # If text_matches_company_name is True, we trust the AI's judgment
+            if not (logo_visible and (normalized_input in normalized_text or text_matches_company_name)):
                 validation_result["status"] = "failed"
                 validation_result["error_message"] = f"Brand name '{brand_name}' not found as exact match in logo file"
         except Exception as e:
@@ -5025,65 +5031,6 @@ class DocumentValidationService:
         #     validation_result["error_message"] = f"Error validating logo file: {str(e)}"
 
         # return validation_result
-
-    # def _validate_brand_name_in_logo(self, trademark_data, applicant_data, rules):
-    #     """
-    #     Validate that the brand name is present in the logo itself
-    #     """
-    #     validation_result = {
-    #         "status": "passed",
-    #         "error_message": None
-    #     }
-        
-    #     # Skip if logo is not used
-    #     has_logo = trademark_data.get('Logo') == "Yes"
-    #     if not has_logo:
-    #         return validation_result
-        
-    #     # Get brand name
-    #     brand_name = trademark_data.get('BrandName', '')
-    #     if not brand_name:
-    #         validation_result["status"] = "failed"
-    #         validation_result["error_message"] = "Brand name is required for logo validation"
-    #         return validation_result
-        
-    #     # Get verification documents if already in use
-    #     already_in_use = trademark_data.get('AlreadyInUse') == "Yes"
-    #     if already_in_use:
-    #         verification_docs = trademark_data.get('VerificationDocs', {})
-            
-    #         # Check if any verification document has logo with brand name
-    #         brand_name_in_logo_found = False
-    #         for doc_key, doc_info in verification_docs.items():
-    #             doc_url = doc_info.get('url', '')
-                
-    #             if not doc_url:
-    #                 continue
-                
-    #             # Extract data from document
-    #             try:
-    #                 extracted_data = self.extraction_service.extract_document_data(
-    #                     doc_url,
-    #                     'trademark_verification'
-    #                 )
-                    
-    #                 if extracted_data:
-    #                     # Check if logo has brand name
-    #                     logo_visible = extracted_data.get('logo_visible', False)
-    #                     brand_in_logo = extracted_data.get('brand_name_in_logo', False)
-                        
-    #                     if logo_visible and brand_in_logo:
-    #                         brand_name_in_logo_found = True
-    #                         break
-                
-    #             except Exception as e:
-    #                 self.logger.error(f"Error checking brand name in logo: {str(e)}", exc_info=True)
-            
-    #         if not brand_name_in_logo_found:
-    #             validation_result["status"] = "failed"
-    #             validation_result["error_message"] = f"Brand name '{brand_name}' not found in any logo"
-        
-    #     return validation_result
 
     def _apply_tm_rules(self, validation_results, rules):
         """
