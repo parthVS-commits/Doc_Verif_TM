@@ -462,7 +462,7 @@ def get_trademark_verification_document_prompt():
     return """
     Analyze this trademark verification document and extract the following:
     
-    - Company name (if visible)
+    - Company name (if visible). Focus on the extracted text and not the brand name
     - Any brand names visible in the document (even if brand name is in logo)
     - Any logos or visual trademarks present
     - Document date (if visible)
